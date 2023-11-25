@@ -25,12 +25,16 @@ export class Locadora {
   
     cadastrarCliente(nome: string, cpf: string, tipoCarteira: 'A' | 'B') {
       if (this.clienteExistente(cpf)) {
-        console.log('Cliente com esse CPF já cadastrado.');
+        console.log(`------------------------------------------------------------
+        Cliente com esse CPF já cadastrado.
+------------------------------------------------------------`);
         return;
       }
       const novoCliente = new Cliente(nome, cpf, tipoCarteira);
       this.clientes.push(novoCliente);
-      console.log('Cliente cadastrado com sucesso.');
+      console.log(`------------------------------------------------------------
+      Cliente cadastrado com sucesso.
+------------------------------------------------------------`);
     }
   
     clienteExistente(cpf: string): boolean {

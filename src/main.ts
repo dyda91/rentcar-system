@@ -89,7 +89,9 @@ class InterfaceTerminal {
             const valorHora = Number(valor);
             const novoVeiculo = new Veiculo(placa, valorHora, modelo, Number(ano));
             this.locadora.veiculos.push(novoVeiculo);
-            console.log('Veículo cadastrado com sucesso.');
+            console.log(`------------------------------------------------------------
+            Veículo cadastrado com sucesso.
+------------------------------------------------------------`);
             this.exibirMenu();
           });
         });
