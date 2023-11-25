@@ -15,12 +15,16 @@ export class Locadora {
   
     cadastrarVeiculo(placa: string, valorHora: number, modelo: string, ano: number) {
       if (this.veiculoExistente(placa)) {
-        console.log('Veículo com essa placa já cadastrado.');
+        console.log(`------------------------------------------------------------
+        Já existe um Veículo cadastrado com a placa ${placa}
+------------------------------------------------------------`);
         return;
       }
       const novoVeiculo = new Veiculo(placa, valorHora, modelo, ano);
       this.veiculos.push(novoVeiculo);
-      console.log('Veículo cadastrado com sucesso.');
+      console.log(`------------------------------------------------------------
+      Veículo cadastrado com sucesso.
+------------------------------------------------------------`);
     }
   
     cadastrarCliente(nome: string, cpf: string, tipoCarteira: 'A' | 'B') {
@@ -49,12 +53,16 @@ export class Locadora {
       const veiculo = this.veiculos.find((veiculo) => veiculo.placa === placa);
     
       if (!veiculo) {
-        console.log('Veículo não encontrado.');
+        console.log(`------------------------------------------------------------
+        Veículo não encontrado.
+------------------------------------------------------------`);
         return;
       }
     
       if (veiculo.alugado) {
-        console.log('Veículo já alugado.');
+        console.log(`------------------------------------------------------------
+        Veículo já alugado.
+------------------------------------------------------------`);
         return;
       }
   
@@ -62,12 +70,16 @@ export class Locadora {
         (cliente.tipoCarteira === 'A' && !(veiculo instanceof Moto)) ||
         (cliente.tipoCarteira === 'B' && !(veiculo instanceof Carro))
       ) {
-        console.log('Tipo de carteira não permite alugar este veículo.');
+        console.log(`------------------------------------------------------------
+        Tipo de carteira não permite alugar este veículo.
+------------------------------------------------------------`);
         return;
       }
   
       if (cliente.veiculoAlugado) {
-        console.log('Cliente já possui um veículo alugado.');
+        console.log(`------------------------------------------------------------
+        Cliente já possui um veículo alugado.
+------------------------------------------------------------`);
         return;
       }
   
@@ -83,24 +95,32 @@ export class Locadora {
   
     veiculo.dataInicioAluguel = `${dataAtual.getDate()}/${dataAtual.getMonth() + 1}/${dataAtual.getFullYear()}`;
   
-    console.log(`Veículo alugado com sucesso. Valor do aluguel: ${valorAluguel}`);
+    console.log(`------------------------------------------------------------
+    Veículo alugado com sucesso. Valor do aluguel: ${valorAluguel}
+------------------------------------------------------------`);
     }
   
     devolverVeiculo(cliente: Cliente, placa: string) {
       const veiculo = this.veiculos.find((veiculo) => veiculo.placa === placa);
   
       if (!veiculo) {
-        console.log('Veículo não encontrado.');
+        console.log(`------------------------------------------------------------
+        Veículo não encontrado.
+------------------------------------------------------------`);
         return;
       }
   
       if (!veiculo.alugado) {
-        console.log('Veículo não está alugado no momento.');
+        console.log(`------------------------------------------------------------
+        Veículo não está alugado no momento.
+------------------------------------------------------------`);
         return;
       }
   
       if (cliente.veiculoAlugado !== veiculo) {
-        console.log('Este veículo não foi alugado por este cliente.');
+        console.log(`------------------------------------------------------------
+        Este veículo não foi alugado por este cliente.
+------------------------------------------------------------`);
         return;
       }
   
@@ -113,7 +133,9 @@ export class Locadora {
         aluguel.status = 'Encerrado'; 
       }
   
-      console.log('Veículo devolvido com sucesso.');
+      console.log(`------------------------------------------------------------
+      Veículo devolvido com sucesso.
+------------------------------------------------------------`);
     }
     listarVeiculosDisponiveis() {
       const veiculosDisponiveis = this.veiculos.filter((veiculo) => !veiculo.alugado);
@@ -131,13 +153,16 @@ export class Locadora {
       const faturas = this.listaAlugueis.filter(aluguel => aluguel.cliente === cliente);
       
       if (faturas.length === 0) {
-        console.log('Este cliente não possui faturas.');
+        console.log(`------------------------------------------------------------
+        Este cliente não possui faturas.
+------------------------------------------------------------`);
         return;
       }
   
       console.log(`Faturas para ${cliente.nome}:`);
       faturas.forEach((aluguel, index) => {
         const data = aluguel.dataInicio.toLocaleDateString('pt-BR');
+        console.log('--------------------------------------');
         console.log(`Fatura ${index + 1}:`);
         console.log(`  Data de Início: ${data}`);
         console.log(`  Quantidade de Dias: ${aluguel.diasAluguel}`);
