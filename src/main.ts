@@ -22,14 +22,15 @@ class InterfaceTerminal {
   exibirMenu() {
     console.log('=== Menu ===');
     console.log('1. Cadastrar Veículo');
-    console.log('2. Alugar Veículo');
-    console.log('3. Devolver Veículo');
-    console.log('4. Listar Veículos Disponíveis');
-    console.log('5. Listar Veículos Alugados');
-    console.log('6. Mostrar Fatura do Cliente');
-    console.log('7. Cadastrar Cliente'); 
-    console.log('8. Sair do Sistema');
-    console.log('9. Listar Aluguéis');
+    console.log('2. Cadastrar Cliente');
+    console.log('3. Alugar Veículo');
+    console.log('4. Devolver Veículo');
+    console.log('5. Listar Veículos Disponíveis');
+    console.log('6. Listar Veículos Alugados');
+    console.log('7. Mostrar Fatura do Cliente');     
+    console.log('8. Listar Aluguéis');
+    console.log('9. Sair do Sistema');
+    
     this.rl.question('Escolha uma opção: ', (resposta) => {
       this.tratarOpcao(resposta);
     });
@@ -41,30 +42,30 @@ class InterfaceTerminal {
         this.cadastrarVeiculo();
         break;
       case '2':
-        this.alugarVeiculo();
+        this.cadastrarCliente();         
         break;
       case '3':
-        this.devolverVeiculo();
+        this.alugarVeiculo();
         break;
       case '4':
-        this.listarVeiculosDisponiveis();
+        this.devolverVeiculo();        
         break;
       case '5':
-        this.listarVeiculosAlugados();
+        this.listarVeiculosDisponiveis();
         break;
       case '6':
-        this.mostrarFaturaCliente();
+        this.listarVeiculosAlugados();
         break;
       case '7':
-        this.cadastrarCliente(); 
+        this.mostrarFaturaCliente();
         break;
       case '8':
-        console.log('Saindo do Sistema...');
-        this.rl.close();
-        break;
-      case '9':
         this.locadora.listarlistaAlugueis();
         this.exibirMenu();
+        break;
+      case '9':
+        console.log('Saindo do Sistema...');
+        this.rl.close();
         break;
       default:
         console.log('Opção inválida. Escolha novamente.');
