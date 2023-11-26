@@ -1,7 +1,7 @@
 import * as readline from 'readline';
-import { Veiculo, Carro, Moto } from './veiculo/veiculo';
-import { Cliente } from './cliente/cliente';
+import { Cliente, Habilitacao } from './cliente/cliente';
 import { Locadora } from './locadora/locadora';
+import { Categoria } from './veiculo/veiculo';
 
 
 
@@ -20,18 +20,18 @@ class InterfaceTerminal {
   }
 
   exibirMenu() {
-    console.log('=== Menu ===');
-    console.log('1. Cadastrar Veículo');
-    console.log('2. Cadastrar Cliente');
-    console.log('3. Alugar Veículo');
-    console.log('4. Devolver Veículo');
-    console.log('5. Listar Veículos Disponíveis');
-    console.log('6. Listar Veículos Alugados');
-    console.log('7. Mostrar Fatura do Cliente');     
-    console.log('8. Listar Aluguéis');
-    console.log('9. Sair do Sistema');
-    
-    this.rl.question('Escolha uma opção: ', (resposta) => {
+    console.log(`============ Menu ============
+1. Cadastrar Veículo
+2. Cadastrar Cliente
+3. Alugar Veículo
+4. Devolver Veículo
+5. Listar Veículos Disponíveis
+6. Listar Veículos Alugados
+7. Mostrar Fatura do Cliente
+8. Listar Aluguéis
+9. Sair do Sistema
+================================`);
+    this.rl.question('\nEscolha uma opção: ', (resposta) => {
       this.tratarOpcao(resposta);
     });
   }
@@ -42,13 +42,13 @@ class InterfaceTerminal {
         this.cadastrarVeiculo();
         break;
       case '2':
-        this.cadastrarCliente();         
+        this.cadastrarCliente();
         break;
       case '3':
         this.alugarVeiculo();
         break;
       case '4':
-        this.devolverVeiculo();        
+        this.devolverVeiculo();
         break;
       case '5':
         this.listarVeiculosDisponiveis();
@@ -70,26 +70,29 @@ class InterfaceTerminal {
       default:
         console.log('Opção inválida. Escolha novamente.');
         this.exibirMenu()
-        break ;
+        break;
     }
   }
 
- 
+
   cadastrarVeiculo() {
-    this.rl.question('Digite a placa do veículo: ', (placa) => {
+    this.rl.question('\nDigite a placa do veículo (Sete Digitos): ', (placa) => {
       if (this.locadora.veiculoExistente(placa)) {
-        console.log('Veículo com essa placa já cadastrado.');
+        console.log('\nVeículo com essa placa já cadastrado.');
         this.exibirMenu();
         return;
       }
 
       this.rl.question('Digite o modelo do veículo: ', (modelo) => {
-        this.rl.question('Digite o ano do veículo: ', (ano) => {
-          this.rl.question('Digite o valor da hora de aluguel: ', (valor) => {
-            const valorHora = Number(valor);
-            const novoVeiculo = new Veiculo(placa, valorHora, modelo, Number(ano));
-            this.locadora.veiculos.push(novoVeiculo);
-            this.exibirMenu();
+        this.rl.question('Digite a categoria do veículo (Carro/Moto): ', (categoria) => {
+          this.rl.question('Digite o ano do veículo: ', (ano) => {
+            this.rl.question('Digite o valor da hora de aluguel: ', (valor) => {
+              const valorHora = Number(valor);
+              const anoNumber = Number(ano);
+              const categoriaEscolhida = Categoria[categoria as keyof typeof Categoria]
+              this.locadora.cadastrarVeiculo(placa, valorHora, modelo, categoriaEscolhida, anoNumber);
+              this.exibirMenu();
+            });
           });
         });
       });
@@ -97,10 +100,10 @@ class InterfaceTerminal {
   }
 
   cadastrarCliente() {
-    this.rl.question('Digite o nome do cliente: ', (nome) => {
-      this.rl.question('Digite o CPF do cliente: ', (cpf) => {
+    this.rl.question('\nDigite o nome do cliente: ', (nome) => {
+      this.rl.question('Digite o CPF do cliente (Onze Digitos - Somente números): ', (cpf) => {
         this.rl.question('Digite o tipo de carteira (A/B): ', (tipo) => {
-          const tipoCarteira = tipo as 'A' | 'B';
+          const tipoCarteira = Habilitacao[tipo as keyof typeof Habilitacao]
           this.locadora.cadastrarCliente(nome, cpf, tipoCarteira);
           this.exibirMenu();
         });
@@ -109,59 +112,70 @@ class InterfaceTerminal {
   }
 
   alugarVeiculo() {
-    this.rl.question('Digite o CPF do cliente: ', (cpf) => {
+    this.rl.question('\nDigite o CPF do cliente: ', (cpf) => {
       const clienteExistente = this.locadora.clientes.find((c) => c.cpf === cpf);
-  
+
       if (clienteExistente) {
         this.rl.question('Digite a placa do veículo a ser alugado: ', (placaVeiculo) => {
           const veiculo = this.locadora.veiculos.find((veiculo) => veiculo.placa === placaVeiculo);
-  
+
           if (!veiculo) {
-            console.log('Veículo não encontrado.');
+            console.log(`\n------------------------------------------------------------
+Veículo não encontrado.
+------------------------------------------------------------`);
             this.exibirMenu();
             return;
           }
-  
+
           if (veiculo.alugado) {
-            console.log('Veículo já alugado.');
+            console.log(`\n------------------------------------------------------------
+Veículo já alugado.
+------------------------------------------------------------`);
             this.exibirMenu();
             return;
           }
-  
-          this.rl.question('Digite a data de início do aluguel (DD/MM/AAAA): ', (dataInicio) => {
-            this.rl.question('Digite a quantidade de dias de aluguel: ', (diasInput) => {
-              const diasAluguel = Number(diasInput);
-  
-              this.locadora.alugarVeiculo(clienteExistente, placaVeiculo, diasAluguel);
-              this.exibirMenu();
+
+          if (veiculo.categoria) {
+
+          }
+            this.rl.question('Digite a data de início do aluguel (DD/MM/AAAA): ', (dataInicio) => {
+              this.rl.question('Digite a quantidade de dias de aluguel: ', (diasInput) => {
+                const diasAluguel = Number(diasInput);
+
+                this.locadora.alugarVeiculo(clienteExistente, placaVeiculo, diasAluguel);
+                this.exibirMenu();
+              });
             });
-          });
         });
       } else {
         this.rl.question('Digite o nome do cliente: ', (nome) => {
           this.rl.question('Digite o tipo de carteira (A/B): ', (tipo) => {
-            const tipoCarteira = tipo as 'A' | 'B';
+            const tipoCarteira = Habilitacao[tipo as keyof typeof Habilitacao]
             const novoCliente = new Cliente(nome, cpf, tipoCarteira);
             this.locadora.clientes.push(novoCliente);
-  
+
             this.rl.question('Digite a placa do veículo a ser alugado: ', (placaVeiculo) => {
               const veiculo = this.locadora.veiculos.find((veiculo) => veiculo.placa === placaVeiculo);
-  
+
               if (!veiculo) {
-                console.log('Veículo não encontrado.');
+                console.log(`\n------------------------------------------------------------
+Veículo não encontrado.
+------------------------------------------------------------`);
                 this.exibirMenu();
                 return;
               }
-  
+
               if (veiculo.alugado) {
-                console.log('Veículo já alugado.');
+                console.log(`\n------------------------------------------------------------
+Veículo já alugado.
+------------------------------------------------------------`);
                 this.exibirMenu();
                 return;
               }
-  
+
               this.rl.question('Digite a quantidade de dias de aluguel: ', (diasInput) => {
                 const diasAluguel = Number(diasInput);
-  
+
                 this.locadora.alugarVeiculo(novoCliente, placaVeiculo, diasAluguel);
                 this.exibirMenu();
               });
@@ -171,14 +185,16 @@ class InterfaceTerminal {
       }
     });
   }
-  
+
 
   devolverVeiculo() {
-    this.rl.question('Digite o CPF do cliente que está devolvendo o veículo: ', (cpf) => {
+    this.rl.question('\nDigite o CPF do cliente que está devolvendo o veículo: ', (cpf) => {
       const cliente = this.locadora.clientes.find((c) => c.cpf === cpf);
 
       if (!cliente) {
-        console.log('Cliente não encontrado.');
+        console.log(`\n------------------------------------------------------------
+Cliente não encontrado.
+------------------------------------------------------------`);
         this.exibirMenu();
         return;
       }
@@ -192,21 +208,24 @@ class InterfaceTerminal {
 
   listarVeiculosDisponiveis() {
     const veiculosDisponiveis = this.locadora.veiculos.filter((veiculo) => !veiculo.alugado);
-  
+
     if (veiculosDisponiveis.length === 0) {
-      console.log('Não há veículos disponíveis no momento.');
+      console.log(`\n------------------------------------------------------------
+Não há veículos disponíveis no momento.
+------------------------------------------------------------`);
       return this.exibirMenu();
     }
-  
-    console.log('------------------------------------------------------------');
-    console.log('| Placa   | Modelo            | Ano   | Valor/Hora |');
-    console.log('------------------------------------------------------------');
+
+    console.log(`\n------------------------------------------------------------
+| Placa     | Modelo - Ano          | Valor/Hora  |
+------------------------------------------------------------
+    `);
     veiculosDisponiveis.forEach((veiculo) => {
       const formattedModelo = `${veiculo.modelo} - ${veiculo.ano}`;
       const placaSpaces = ' '.repeat(10 - veiculo.placa.length);
       const modeloSpaces = ' '.repeat(18 - formattedModelo.length);
       const valorHoraSpaces = ' '.repeat(12 - veiculo.valorHora.toString().length);
-  
+
       console.log(`| ${veiculo.placa}${placaSpaces} | ${formattedModelo}${modeloSpaces} | ${veiculo.valorHora}${valorHoraSpaces} |`);
     });
     console.log('------------------------------------------------------------');
@@ -215,26 +234,28 @@ class InterfaceTerminal {
 
   listarVeiculosAlugados() {
     const veiculosAlugados = this.locadora.veiculos.filter((veiculo) => veiculo.alugado);
-  
+
     if (veiculosAlugados.length === 0) {
-      console.log('Não há veículos alugados no momento.');
+      console.log(`\n------------------------------------------------------------
+Não há veículos alugados no momento.
+------------------------------------------------------------`);
       return this.exibirMenu();
     }
-  
-    console.log('Veículos alugados:');
-    console.log('------------------------------------------------------------');
-    console.log('| Placa       | Modelo            | Cliente                   |');
-    console.log('------------------------------------------------------------');
+
+    console.log(`\nVeículos alugados:
+------------------------------------------------------------
+| Placa       | Modelo            | Cliente                |
+------------------------------------------------------------`);
     veiculosAlugados.forEach((veiculo) => {
       const clienteInfo = veiculo.alugadoPor
         ? `${veiculo.alugadoPor.nome} - ${veiculo.alugadoPor.cpf}`
         : 'Sem cliente';
-  
+
       const formattedModelo = `${veiculo.modelo} - ${veiculo.ano}`;
       const placaSpaces = ' '.repeat(10 - veiculo.placa.length);
       const modeloSpaces = ' '.repeat(18 - formattedModelo.length);
       const clienteSpaces = ' '.repeat(26 - clienteInfo.length);
-  
+
       console.log(`| ${veiculo.placa}${placaSpaces} | ${formattedModelo}${modeloSpaces} | ${clienteInfo}${clienteSpaces} |`);
     });
     console.log('------------------------------------------------------------');
@@ -242,11 +263,13 @@ class InterfaceTerminal {
   }
 
   mostrarFaturaCliente() {
-    this.rl.question('Digite o CPF do cliente para mostrar a fatura: ', (cpf) => {
+    this.rl.question('\nDigite o CPF do cliente para mostrar a fatura: ', (cpf) => {
       const cliente = this.locadora.clientes.find((c) => c.cpf === cpf);
 
       if (!cliente || !cliente.veiculoAlugado) {
-        console.log('Cliente não encontrado ou não possui veículo alugado.');
+        console.log(`\n------------------------------------------------------------
+Cliente não encontrado ou não possui veículo alugado.
+------------------------------------------------------------`);
         this.exibirMenu();
         return;
       }

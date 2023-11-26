@@ -5,19 +5,26 @@ export class Veiculo {
     valorHora: number;
     alugado: boolean;
     modelo: string;
+    categoria: Categoria;
     ano: number;
     alugadoPor: Cliente | null;
     dataInicioAluguel: string | null; 
     
-    constructor(placa: string, valorHora: number, modelo: string, ano: number) {
+    constructor(placa: string, valorHora: number, modelo: string, ano: number, categoria: Categoria) {
       this.placa = placa;
       this.valorHora = valorHora;
       this.alugado = false;
       this.modelo = modelo;
+      this.categoria = categoria;
       this.ano = ano;
       this.alugadoPor = null;
       this.dataInicioAluguel = null; 
     }
+  }
+
+  export enum Categoria {
+    Carro = 'Carro',
+    Moto = 'Moto'
   }
 
 export class Carro extends Veiculo {}
