@@ -28,12 +28,6 @@ Placa não válida
       return;
     }
 
-//     if(categoria != Categoria.Carro || Categoria.Moto){
-//       console.log(`\n------------------------------------------------------------
-// Categoria não válida.
-// ------------------------------------------------------------\n`);
-//       return;
-//     }
 
     const novoVeiculo = new Veiculo(placa, valorHora, modelo, ano, categoria);
     this.veiculos.push(novoVeiculo);
@@ -58,13 +52,6 @@ CPF não válido
       return;
     }
     
-    
-//     if(tipoCarteira != Habilitacao.Carro || Habilitacao.Moto) {
-//       console.log(`\n------------------------------------------------------------
-// Habilitação não válida.
-// ------------------------------------------------------------\n`);
-//       return;
-//     }
 
     const novoCliente = new Cliente(nome, cpf, tipoCarteira);
     this.clientes.push(novoCliente);
@@ -91,53 +78,53 @@ Cliente cadastrado com sucesso.
 
   alugarVeiculo(cliente: Cliente, placa: string, dias: number) {
     const veiculo = this.veiculos.find((veiculo) => veiculo.placa === placa);
-
+  
     if (!veiculo) {
       console.log(`\n------------------------------------------------------------
-Veículo não encontrado.
-------------------------------------------------------------\n`);
+  Veículo não encontrado.
+  ------------------------------------------------------------\n`);
       return;
     }
-
+  
     if (veiculo.alugado) {
       console.log(`\n------------------------------------------------------------
-Veículo já alugado.
-------------------------------------------------------------\n`);
+  Veículo já alugado.
+  ------------------------------------------------------------\n`);
       return;
     }
-
+  
     if (
-      (cliente.tipoCarteira === 'A' && !(veiculo.categoria != Categoria.Carro)) ||
-      (cliente.tipoCarteira === 'B' && !(veiculo.categoria != Categoria.Moto))
+      (cliente.tipoCarteira === Habilitacao.Moto && veiculo.categoria !== Categoria.Moto) ||
+      (cliente.tipoCarteira === Habilitacao.Carro && veiculo.categoria !== Categoria.Carro)
     ) {
       console.log(`\n------------------------------------------------------------
-Tipo de carteira não permite alugar este veículo.
-------------------------------------------------------------\n`);
+  Tipo de carteira não permite alugar este veículo.
+  ------------------------------------------------------------\n`);
       return;
     }
-
+  
     if (cliente.veiculoAlugado) {
       console.log(`\n------------------------------------------------------------
-Cliente já possui um veículo alugado.
-------------------------------------------------------------\n`);
+  Cliente já possui um veículo alugado.
+  ------------------------------------------------------------\n`);
       return;
     }
-
+  
     veiculo.alugado = true;
     veiculo.alugadoPor = cliente;
     cliente.veiculoAlugado = veiculo;
-
+  
     const dataAtual = new Date();
     const valorAluguel = veiculo.valorHora * 24 * dias;
-
+  
     const novoAluguel = new Aluguel(dataAtual, dias, veiculo, cliente, valorAluguel);
     this.listaAlugueis.push(novoAluguel);
-
+  
     veiculo.dataInicioAluguel = `${dataAtual.getDate()}/${dataAtual.getMonth() + 1}/${dataAtual.getFullYear()}`;
-
+  
     console.log(`\n------------------------------------------------------------
-Veículo alugado com sucesso. Valor do aluguel: ${valorAluguel}
-------------------------------------------------------------\n`);
+  Veículo alugado com sucesso. Valor do aluguel: ${valorAluguel}
+  ------------------------------------------------------------\n`);
   }
 
   devolverVeiculo(cliente: Cliente, placa: string) {

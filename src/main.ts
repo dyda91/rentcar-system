@@ -7,7 +7,7 @@ import { Categoria } from './veiculo/veiculo';
 
 const locadora = new Locadora();
 
-class InterfaceTerminal {
+class MenuTerminal {
   locadora: Locadora;
   rl: readline.Interface;
 
@@ -82,14 +82,23 @@ class InterfaceTerminal {
         this.exibirMenu();
         return;
       }
-
+  
       this.rl.question('Digite o modelo do veículo: ', (modelo) => {
         this.rl.question('Digite a categoria do veículo (Carro/Moto): ', (categoria) => {
+          categoria = categoria.toLowerCase();
+          if (categoria !== 'carro' && categoria !== 'moto') {
+            console.log('\nCategoria inválida. Por favor, digite "Carro" ou "Moto".');
+            this.cadastrarVeiculo(); 
+            return;
+          }
+  
+          const categoriaEscolhida = categoria === 'carro' ? Categoria.Carro : Categoria.Moto;
+  
           this.rl.question('Digite o ano do veículo: ', (ano) => {
             this.rl.question('Digite o valor da hora de aluguel: ', (valor) => {
               const valorHora = Number(valor);
               const anoNumber = Number(ano);
-              const categoriaEscolhida = Categoria[categoria as keyof typeof Categoria]
+  
               this.locadora.cadastrarVeiculo(placa, valorHora, modelo, categoriaEscolhida, anoNumber);
               this.exibirMenu();
             });
@@ -103,7 +112,16 @@ class InterfaceTerminal {
     this.rl.question('\nDigite o nome do cliente: ', (nome) => {
       this.rl.question('Digite o CPF do cliente (Onze Digitos - Somente números): ', (cpf) => {
         this.rl.question('Digite o tipo de carteira (A/B): ', (tipo) => {
-          const tipoCarteira = Habilitacao[tipo as keyof typeof Habilitacao]
+          tipo = tipo.toUpperCase();
+          
+          if (tipo !== 'A' && tipo !== 'B') {
+            console.log('Tipo de carteira inválido. Por favor, digite "A" para Moto ou "B" para Carro.');
+            this.cadastrarCliente(); 
+            return;
+          }
+          
+          const tipoCarteira = tipo === 'A' ? Habilitacao.Moto : Habilitacao.Carro;
+  
           this.locadora.cadastrarCliente(nome, cpf, tipoCarteira);
           this.exibirMenu();
         });
@@ -114,38 +132,45 @@ class InterfaceTerminal {
   alugarVeiculo() {
     this.rl.question('\nDigite o CPF do cliente: ', (cpf) => {
       const clienteExistente = this.locadora.clientes.find((c) => c.cpf === cpf);
-
+  
       if (clienteExistente) {
         this.rl.question('Digite a placa do veículo a ser alugado: ', (placaVeiculo) => {
           const veiculo = this.locadora.veiculos.find((veiculo) => veiculo.placa === placaVeiculo);
-
+  
           if (!veiculo) {
             console.log(`\n------------------------------------------------------------
-Veículo não encontrado.
-------------------------------------------------------------`);
+  Veículo não encontrado.
+  ------------------------------------------------------------`);
             this.exibirMenu();
             return;
           }
-
+  
           if (veiculo.alugado) {
             console.log(`\n------------------------------------------------------------
-Veículo já alugado.
-------------------------------------------------------------`);
+  Veículo já alugado.
+  ------------------------------------------------------------`);
             this.exibirMenu();
             return;
           }
-
-          if (veiculo.categoria) {
-
-          }
-            this.rl.question('Digite a data de início do aluguel (DD/MM/AAAA): ', (dataInicio) => {
-              this.rl.question('Digite a quantidade de dias de aluguel: ', (diasInput) => {
-                const diasAluguel = Number(diasInput);
-
+  
+          this.rl.question('Digite a data de início do aluguel (DD/MM/AAAA): ', (dataInicio) => {
+            this.rl.question('Digite a quantidade de dias de aluguel: ', (diasInput) => {
+              const diasAluguel = Number(diasInput);
+  
+              if (
+                (clienteExistente.tipoCarteira === "A" && veiculo.categoria === Categoria.Moto) ||
+                (clienteExistente.tipoCarteira === "B" && veiculo.categoria === Categoria.Carro)
+              ) {
                 this.locadora.alugarVeiculo(clienteExistente, placaVeiculo, diasAluguel);
                 this.exibirMenu();
-              });
+              } else {
+                console.log(`\n------------------------------------------------------------
+  Tipo de carteira não permite alugar esse veículo.
+  ------------------------------------------------------------`);
+                this.exibirMenu();
+              }
             });
+          });
         });
       } else {
         this.rl.question('Digite o nome do cliente: ', (nome) => {
@@ -280,5 +305,5 @@ Cliente não encontrado ou não possui veículo alugado.
   }
 }
 
-const interfaceTerminal = new InterfaceTerminal(locadora);
-interfaceTerminal.exibirMenu();
+const menuTerminal = new MenuTerminal(locadora);
+menuTerminal.exibirMenu();

@@ -23,8 +23,8 @@ export class Veiculo {
   }
 
   export enum Categoria {
-    Carro = 'Carro',
-    Moto = 'Moto'
+    Carro = "carro",
+    Moto = "moto"
   }
 
 export class Carro extends Veiculo {}
