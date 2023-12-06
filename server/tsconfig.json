@@ -1,5 +1,9 @@
 {
     "compilerOptions": {
+        
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true,
         "target": "ES6", // versão do ECMAScript
         "module": "CommonJS",
         "rootDir": "./src",
